@@ -72,4 +72,3 @@ services:
 
 networks:
   e2e:
-    driver: bridge
