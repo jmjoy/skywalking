@@ -27,73 +27,8 @@ env:
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5 # Cache restore timeout
 
 jobs:
-  dist-tar:
-    name: Build dist tar
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-          persist-credentials: false
-      - uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "11"
-          cache: "maven"
-      - name: Build distribution tar
-        run: |
-          ./mvnw clean flatten:flatten install javadoc:javadoc -B -q -Pall \
-            -Dmaven.test.skip \
-            -Dcheckstyle.skip \
-            -Dgpg.skip
-      - name: Verify builds are reproducible
-        run: ./mvnw -Dmaven.test.skip clean flatten:flatten verify artifact:compare -Pall -Dgpg.skip
-      - uses: actions/upload-artifact@v4
-        name: Upload distribution tar
-        with:
-          name: dist
-          path: dist
-
-  docker:
-    name: Docker images
-    needs: [dist-tar]
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      matrix:
-        java-version: [11, 17]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-          persist-credentials: false
-      - uses: actions/download-artifact@v4
-        name: Download distribution tar
-        with:
-          name: dist
-          path: dist
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${{ matrix.java-version }}
-      - name: Build and save docker images
-        env:
-          SW_OAP_BASE_IMAGE: eclipse-temurin:${{ matrix.java-version }}-jre
-        run: |
-          make docker.all || make docker.all
-          docker save -o docker-images-skywalking-oap.tar skywalking/oap:latest
-          docker save -o docker-images-skywalking-ui.tar skywalking/ui:latest
-      - name: Upload docker images
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-images-${{ matrix.java-version }}
-          path: docker-images-skywalking-*.tar
-
   e2e-test:
     name: E2E test
-    needs: [docker, dist-tar]
     runs-on: ${{ matrix.test.runs-on || 'ubuntu-latest' }}
     timeout-minutes: 60
     env:
@@ -113,20 +48,6 @@ jobs:
       - uses: apache/skywalking-cli/actions/setup@master
         with:
           version: ${{ env.SW_CTL_COMMIT }}
-      - uses: actions/download-artifact@v4
-        name: Download docker images
-        with:
-          name: docker-images-11
-          path: docker-images
-      - name: Load docker images
-        run: |
-          find docker-images -name "*.tar" -exec docker load -i {} \;
-          find docker-images -name "*.tar" -exec rm {} \;
-      - uses: actions/download-artifact@v4
-        name: Download distribution tar
-        with:
-          name: dist
-          path: dist
       - name: Login to ghcr
         uses: docker/login-action@v3
         with:
