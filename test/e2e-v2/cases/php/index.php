@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+usleep(500000);
 $uri = $_SERVER['REQUEST_URI'];
 
 if($uri == '/php/info') {
@@ -24,9 +25,7 @@ if($uri == '/php/info') {
     if (curl_errno($ch)) {
         $error_code = curl_errno($ch);
         $error_message = curl_error($ch);
-        file_put_contents('/tmp/provider-outputs.txt', "failed: $error_code $error_message \n", FILE_APPEND);
-    } else {
-        file_put_contents('/tmp/provider-outputs.txt', "success: $output \n", FILE_APPEND);
+        throw new Exception("php failed: $error_code $error_message");
     }
     curl_close($ch);
 }

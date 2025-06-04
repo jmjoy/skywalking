@@ -16,4 +16,4 @@
 
 
 nginx
-php-fpm
+php-fpm -R -F
