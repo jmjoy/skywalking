@@ -152,6 +152,8 @@ jobs:
         uses: apache/skywalking-infra-e2e@cf589b4a0b9f8e6f436f78e9cfd94a1ee5494180
         with:
           e2e-file: $GITHUB_WORKSPACE/${{ matrix.test.config }}
+      - if: ${{ always() }}
+        run: cat /tmp/skywalking-agent.log
       - if: ${{ failure() }}
         run: |
           df -h
