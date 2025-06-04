@@ -154,6 +154,8 @@ jobs:
           e2e-file: $GITHUB_WORKSPACE/${{ matrix.test.config }}
       - if: ${{ always() }}
         run: cat /tmp/skywalking-agent.log
+      - if: ${{ always() }}
+        run: cat /tmp/provider-outputs.txt
       - if: ${{ failure() }}
         run: |
           df -h

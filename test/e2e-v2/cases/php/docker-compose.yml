@@ -50,6 +50,11 @@ services:
       - ./php.ini:/usr/local/etc/php/conf.d/ext-skywalking_agent.ini
       - ./nginx.conf:/etc/nginx/nginx.conf
       - /tmp:/tmp
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z 127.0.0.1 8080"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
 
   provider:
     extends:

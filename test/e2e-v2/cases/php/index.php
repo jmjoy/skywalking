@@ -21,5 +21,12 @@ if($uri == '/php/info') {
     curl_setopt($ch, CURLOPT_URL, "http://provider:9090/info");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $output = curl_exec($ch);
+    if (curl_errno($ch)) {
+        $error_code = curl_errno($ch);
+        $error_message = curl_error($ch);
+        file_put_contents('/tmp/provider-outputs.txt', "failed: $error_code $error_message \n", FILE_APPEND);
+    } else {
+        file_put_contents('/tmp/provider-outputs.txt', "success: $output \n", FILE_APPEND);
+    }
     curl_close($ch);
 }
