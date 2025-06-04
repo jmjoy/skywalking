@@ -49,6 +49,8 @@ services:
         condition: service_healthy
       oap:
         condition: service_healthy
+      banyandb:
+        condition: service_healthy
     volumes:
       - ./index.php:/var/www/html/index.php
       - ./php.ini:/usr/local/etc/php/conf.d/ext-skywalking_agent.ini

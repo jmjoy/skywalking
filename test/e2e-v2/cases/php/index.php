@@ -25,7 +25,7 @@ if($uri == '/php/info') {
     if (curl_errno($ch)) {
         $error_code = curl_errno($ch);
         $error_message = curl_error($ch);
-        throw new Exception("php failed: $error_code $error_message");
+        throw new Exception("curl failed: $error_code $error_message");
     }
     curl_close($ch);
 }

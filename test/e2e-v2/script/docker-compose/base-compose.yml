@@ -109,7 +109,7 @@ services:
       start_period: 40s
 
   provider:
-    image: "ghcr.io/apache/skywalking-java/skywalking-java:${SW_AGENT_JAVA_COMMIT}-java${SW_AGENT_JDK_VERSION}"
+    image: "ghcr.io/apache/skywalking-java/skywalking-java:f0245864e4388a388fe7445b56b6ce7cedc94aaf-java8"
     volumes:
       - ./../../java-test-service/e2e-service-provider/target/e2e-service-provider-2.0.0.jar:/services_provider.jar
     command: [ "java", "-jar", "/services_provider.jar" ]
