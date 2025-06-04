@@ -38,7 +38,7 @@ trigger:
 verify:
   # verify with retry strategy
   retry:
-    count: 1
+    count: 20
     interval: 15s
   cases:
     # layer list
